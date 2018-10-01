@@ -1,4 +1,4 @@
-FROM ubuntu:16.04
+FROM ubuntu:18.04
 
 RUN apt-get update && apt-get install -y --no-install-recommends \
   g++ \
@@ -9,9 +9,13 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
   python2.7 \
   git \
   cmake \
+  software-properties-common \
   sudo \
-  gdb \
   xz-utils
+
+RUN add-apt-repository ppa:ubuntu-toolchain-r/test && \
+  apt-get update && \
+  apt-get install -y --no-install-recommends gdb
 
 COPY scripts/sccache.sh /scripts/
 RUN sh /scripts/sccache.sh

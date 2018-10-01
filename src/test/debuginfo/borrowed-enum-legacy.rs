@@ -11,9 +11,13 @@
 // ignore-tidy-linelength
 // min-lldb-version: 310
 
-// Require LLVM with DW_TAG_variant_part and a gdb that can read it.
-// min-system-llvm-version: 7.0
-// min-gdb-version: 8.2
+// As long as LLVM 5 and LLVM 6 are supported, we want to test the
+// enum debuginfo fallback mode.  Once those are desupported, this
+// test can be removed, as there is another (non-"legacy") test that
+// tests the new mode.
+// ignore-llvm-version: 7.0 - 9.9.9
+// ignore-gdb-version: 7.11.90 - 7.12.9
+// ignore-gdb-version: 8.2 - 9.9
 
 // compile-flags:-g
 
@@ -22,13 +26,16 @@
 // gdb-command:run
 
 // gdb-command:print *the_a_ref
-// gdbr-check:$1 = borrowed_enum::ABC::TheA{x: 0, y: 8970181431921507452}
+// gdbg-check:$1 = {{RUST$ENUM$DISR = TheA, x = 0, y = 8970181431921507452}, {RUST$ENUM$DISR = TheA, [...]}}
+// gdbr-check:$1 = borrowed_enum_legacy::ABC::TheA{x: 0, y: 8970181431921507452}
 
 // gdb-command:print *the_b_ref
-// gdbr-check:$2 = borrowed_enum::ABC::TheB(0, 286331153, 286331153)
+// gdbg-check:$2 = {{RUST$ENUM$DISR = TheB, [...]}, {RUST$ENUM$DISR = TheB, __0 = 0, __1 = 286331153, __2 = 286331153}}
+// gdbr-check:$2 = borrowed_enum_legacy::ABC::TheB(0, 286331153, 286331153)
 
 // gdb-command:print *univariant_ref
-// gdbr-check:$3 = borrowed_enum::Univariant::TheOnlyCase(4820353753753434)
+// gdbg-check:$3 = {{__0 = 4820353753753434}}
+// gdbr-check:$3 = borrowed_enum_legacy::Univariant::TheOnlyCase(4820353753753434)
 
 
 // === LLDB TESTS ==================================================================================
